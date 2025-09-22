@@ -1,5 +1,6 @@
 ﻿using System.Buffers.Binary;
 using System.Diagnostics;
+using Enum = SuperSerializer.Enum;
 using System.Reflection;
 using System.Text;
 
@@ -48,11 +49,11 @@ public class PropertyMetadata<T>
         type == typeof(bool);
 
     private static int GetTypeCode(Type type) =>
-        type == typeof(string) ? 0 :
-        type == typeof(int) ? 1 :
-        type == typeof(double) ? 2 :
-        type == typeof(float) ? 3 :
-        type == typeof(bool) ? 4 :
+        type == typeof(string) ? (int)Enum.TypeCode.String :
+        type == typeof(int) ? (int)Enum.TypeCode.Int :
+        type == typeof(double) ? (int)Enum.TypeCode.Double :
+        type == typeof(float) ? (int)Enum.TypeCode.Float :
+        type == typeof(bool) ? (int)Enum.TypeCode.Bool :
         throw new NotSupportedException($"Type '{type.Name}' is not supported.");
 
     public static Type FromTypeCode(int code) =>
