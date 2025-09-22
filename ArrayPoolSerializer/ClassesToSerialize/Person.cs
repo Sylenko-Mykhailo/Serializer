@@ -1,7 +1,6 @@
-﻿
-using SuperSerializer.Attributes;
+﻿using ArrayPoolSerializer.Attributes;
 
-namespace SuperSerializer.ClassesToSerialize;
+namespace ArrayPoolSerializer.ClassesToSerialize;
 
 public class Person
 {

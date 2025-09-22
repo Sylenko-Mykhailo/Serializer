@@ -1,26 +1,26 @@
 ﻿using System.Buffers.Binary;
-using System.Reflection;
 using System.Text;
+using ArrayPoolSerializer.Helper;
+using ArrayPoolSerializer.Interfaces;
 using SuperSerializer.Helper;
-using SuperSerializer.Interfaces;
 
-namespace SuperSerializer.Services;
+namespace ArrayPoolSerializer.Services;
 
 public class Deserializer<T> : IDeserializer<T>, IDisposable where T : class, new()
 {
     private const int IntSize = 4;
-    private readonly TypeMetadata<T> _metadata = new();
     private readonly DynamicBuffer _buffer;
     private readonly ILogger? _logger;
-    private bool _disposed = false;
-    
+    private readonly TypeMetadata<T> _metadata = new();
+    private bool _disposed;
+
     public Deserializer(ILogger? logger = null)
     {
         _logger = logger;
         _buffer = new DynamicBuffer();
         _buffer.EnsureCapacity(DynamicBuffer.CalculateApproxSize(_metadata));
     }
-    
+
     public List<T> Deserialize(Stream stream)
     {
         var list = new List<T>();
@@ -35,10 +35,16 @@ public class Deserializer<T> : IDeserializer<T>, IDisposable where T : class, ne
         return list;
     }
 
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
     private List<(string, Type)> ReadProperties(Stream stream)
     {
         var properties = new List<( string Name, Type type)>();
-        
+
         var buffer = _buffer.Span[..IntSize];
         stream.ReadExactly(buffer);
         var count = BinaryPrimitives.ReadInt32LittleEndian(buffer);
@@ -88,15 +94,15 @@ public class Deserializer<T> : IDeserializer<T>, IDisposable where T : class, ne
 
         return properties;
     }
-    
+
     private T ReadValues(Stream stream, List<(string, Type)> propertyNames)
     {
         var obj = new T();
 
         foreach (var (propName, propType) in propertyNames)
         {
-            if ( _metadata.Properties.All(p => p.Name != propName)
-                 || _metadata.Properties.FirstOrDefault(p => p.Name == propName)?.GetType() == propType)
+            if (_metadata.Properties.All(p => p.Name != propName)
+                || _metadata.Properties.FirstOrDefault(p => p.Name == propName)?.GetType() == propType)
             {
                 // Skip unknown property
                 var skipSizeBuf = _buffer.Span[..IntSize];
@@ -128,24 +134,16 @@ public class Deserializer<T> : IDeserializer<T>, IDisposable where T : class, ne
         return obj;
     }
 
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
     protected virtual void Dispose(bool disposing)
     {
         if (!_disposed)
         {
-            if (disposing)
-            {
-                _buffer.Dispose();
-            }
-            
+            if (disposing) _buffer.Dispose();
+
             _disposed = true;
         }
     }
+
     ~Deserializer()
     {
         Dispose(false);

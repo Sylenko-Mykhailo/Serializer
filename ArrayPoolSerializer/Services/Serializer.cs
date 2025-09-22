@@ -1,23 +1,30 @@
 ﻿using System.Buffers.Binary;
 using System.Text;
+using ArrayPoolSerializer.Helper;
+using ArrayPoolSerializer.Interfaces;
 using SuperSerializer.Helper;
-using SuperSerializer.Interfaces;
 
-namespace SuperSerializer.Services;
+namespace ArrayPoolSerializer.Services;
 
 public class Serializer<T> : ISerializer<T>, IDisposable where T : class
 {
     private const int IntSize = 4;
-    private readonly TypeMetadata<T> _metadata = new();
     private readonly DynamicBuffer _buffer;
     private readonly ILogger? _logger;
-    private bool _disposed = false;
+    private readonly TypeMetadata<T> _metadata = new();
+    private bool _disposed;
 
     public Serializer(ILogger? logger = null)
     {
         _logger = logger;
         _buffer = new DynamicBuffer();
         _buffer.EnsureCapacity(DynamicBuffer.CalculateApproxSize(_metadata));
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 
     public void Serialize(T obj, Stream stream)
@@ -42,13 +49,13 @@ public class Serializer<T> : ISerializer<T>, IDisposable where T : class
 
         _logger?.Log($"Serialization of {listToSerialize.Count} completed.");
     }
-    
+
     private void SaveProperties(Stream stream)
     {
         var sizeOfAllPropInfo = IntSize;
         var sizesOfProperties = new int[_metadata.PropertiesCount];
 
-        for (int i = 0; i < _metadata.PropertiesCount; i++)
+        for (var i = 0; i < _metadata.PropertiesCount; i++)
         {
             var propNameBytes = _metadata.Properties[i].NameBytes;
             sizesOfProperties[i] = IntSize + propNameBytes.Length + IntSize;
@@ -110,25 +117,16 @@ public class Serializer<T> : ISerializer<T>, IDisposable where T : class
         stream.Write(_buffer.Span[..sizeOfValuesToWrite]);
     }
 
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
     protected virtual void Dispose(bool disposing)
     {
         if (!_disposed)
         {
-            if (disposing)
-            {
-                _buffer.Dispose();
-            }
-            
+            if (disposing) _buffer.Dispose();
+
             _disposed = true;
         }
     }
-    
+
     ~Serializer()
     {
         Dispose(false);

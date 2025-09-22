@@ -1,6 +1,6 @@
-﻿using SuperSerializer.Interfaces;
+﻿using ArrayPoolSerializer.Interfaces;
 
-namespace SuperSerializer.Services;
+namespace ArrayPoolSerializer.Services;
 
 public class Logger : ILogger
 {

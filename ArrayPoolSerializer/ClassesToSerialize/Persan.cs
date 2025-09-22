@@ -1,5 +1,6 @@
-﻿using SuperSerializer.Attributes;
-namespace SuperSerializer.ClassesToSerialize;
+﻿using ArrayPoolSerializer.Attributes;
+
+namespace ArrayPoolSerializer.ClassesToSerialize;
 
 public class Persan
 {

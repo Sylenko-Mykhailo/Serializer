@@ -1,14 +1,10 @@
 ﻿using System.Reflection;
-using SuperSerializer.Attributes;
+using ArrayPoolSerializer.Attributes;
 
 namespace SuperSerializer.Helper;
 
 public class TypeMetadata<T>
 {
-    public List<PropertyMetadata<T>> Properties { get; }
-    
-    public int PropertiesCount { get; }
-
     public TypeMetadata()
     {
         Properties = typeof(T)
@@ -21,6 +17,12 @@ public class TypeMetadata<T>
         PropertiesCount = Properties.Count;
     }
 
-    public int GetTotalSize(T obj) =>
-        Properties.Sum(p => p.GetValueSize(obj));
+    public List<PropertyMetadata<T>> Properties { get; }
+
+    public int PropertiesCount { get; }
+
+    public int GetTotalSize(T obj)
+    {
+        return Properties.Sum(p => p.GetValueSize(obj));
+    }
 }
