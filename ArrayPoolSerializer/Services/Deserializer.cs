@@ -12,6 +12,7 @@ public class Deserializer<T> : IDeserializer<T>, IDisposable where T : class, ne
     private readonly TypeMetadata<T> _metadata = new();
     private readonly DynamicBuffer _buffer;
     private readonly ILogger? _logger;
+    private bool _disposed = false;
     
     public Deserializer(ILogger? logger = null)
     {
@@ -129,6 +130,24 @@ public class Deserializer<T> : IDeserializer<T>, IDisposable where T : class, ne
 
     public void Dispose()
     {
-        _buffer.Dispose();
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposed)
+        {
+            if (disposing)
+            {
+                _buffer.Dispose();
+            }
+            
+            _disposed = true;
+        }
+    }
+    ~Deserializer()
+    {
+        Dispose(false);
     }
 }

@@ -108,4 +108,5 @@ public class Serializer<T> : ISerializer<T> where T : class
 
         stream.Write(_buffer.Span[..sizeOfValuesToWrite]);
     }
+    
 }
