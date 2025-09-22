@@ -1,5 +1,5 @@
-﻿using ArrayPoolSerializer.ClassesToSerialize;
-using ArrayPoolSerializer.Services;
+﻿using ArrayPoolSerializer.Services;
+using SerializerLibrary.ClassesToSerialize;
 
 var list = new List<Person>
 {

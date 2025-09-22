@@ -1,6 +1,6 @@
-﻿using ArrayPoolSerializer.Interfaces;
+﻿using SerializerLibrary.Interfaces;
 
-namespace ArrayPoolSerializer.Services;
+namespace SerializerLibrary.Service;
 
 public class Logger : ILogger
 {

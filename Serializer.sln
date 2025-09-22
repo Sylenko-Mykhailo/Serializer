@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperSerializer", "SuperSer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArrayPoolSerializer", "ArrayPoolSerializer\ArrayPoolSerializer.csproj", "{410178AF-54DB-47EF-AC0E-0A7E27A1EA6F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerializerLibrary", "SerializerLibrary\SerializerLibrary.csproj", "{E6387CD3-C6D3-4EE3-81A2-809BD52EAE91}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{410178AF-54DB-47EF-AC0E-0A7E27A1EA6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{410178AF-54DB-47EF-AC0E-0A7E27A1EA6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{410178AF-54DB-47EF-AC0E-0A7E27A1EA6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6387CD3-C6D3-4EE3-81A2-809BD52EAE91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6387CD3-C6D3-4EE3-81A2-809BD52EAE91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6387CD3-C6D3-4EE3-81A2-809BD52EAE91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6387CD3-C6D3-4EE3-81A2-809BD52EAE91}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

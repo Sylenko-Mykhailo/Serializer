@@ -1,6 +1,4 @@
-﻿
-
-using SuperSerializer.ClassesToSerialize;
+﻿using SerializerLibrary.ClassesToSerialize;
 using SuperSerializer.Services;
 
 var list = new List<Person>

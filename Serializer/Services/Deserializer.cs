@@ -2,11 +2,13 @@
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
-using SerializatorDeserializator.Interfaces;
+using SerializerLibrary.Interfaces;
+using Serialize = Serializer.Interfaces;
 
-namespace SerializatorDeserializator.Services;
 
-public class Deserializer<T>(ILogger logger) : IDeserializer<T> where T : class, new()
+namespace Serializer.Services;
+
+public class Deserializer<T>(ILogger logger) : Serialize.IDeserializer<T> where T : class, new()
 {
     private readonly byte[] _dataBuffer = new byte[2048];
 

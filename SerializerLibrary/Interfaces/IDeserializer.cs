@@ -1,4 +1,4 @@
-﻿namespace ArrayPoolSerializer.Interfaces;
+﻿namespace SerializerLibrary.Interfaces;
 
 public interface IDeserializer<T> where T : new()
 {

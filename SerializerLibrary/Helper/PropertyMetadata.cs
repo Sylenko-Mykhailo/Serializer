@@ -1,17 +1,36 @@
 ﻿using System.Buffers.Binary;
-using System.Diagnostics;
-using Enum = SuperSerializer.Enum;
 using System.Reflection;
 using System.Text;
 
-namespace SuperSerializer.Helper;
+namespace SerializerLibrary.Helper;
 
 public delegate void WriteDelegate(Span<byte> span, object? value);
+
 public delegate object? ReadDelegate(ReadOnlySpan<byte> span);
+
 public class PropertyMetadata<T>
 {
+    private const int IntSize = sizeof(int);
+
+    public PropertyMetadata(PropertyInfo prop)
+    {
+        Name = prop.Name;
+        NameBytes = Encoding.UTF8.GetBytes(Name);
+        PropertyInfo = prop;
+
+        Getter = obj => prop.GetValue(obj);
+        Setter = (obj, value) => prop.SetValue(obj, value);
+
+
+        PropertyType = prop.PropertyType;
+        TypeCode = GetTypeCode(PropertyType);
+
+        // Assign lambdas for writing and reading
+        (Write, Read) = CreateHandlers(PropertyType);
+    }
+
     public string Name { get; }
-    
+
     public byte[] NameBytes { get; }
     public Func<T, object?> Getter { get; }
     public Action<T, object?> Setter { get; }
@@ -22,42 +41,28 @@ public class PropertyMetadata<T>
     public WriteDelegate Write { get; }
     public ReadDelegate Read { get; }
 
-    private const int IntSize = sizeof(int);
-
-    public PropertyMetadata(PropertyInfo prop)
+    public static bool IsSupported(Type type)
     {
-        Name = prop.Name;
-        NameBytes = Encoding.UTF8.GetBytes(Name);
-        PropertyInfo = prop;
-        
-        Getter = obj => prop.GetValue(obj);
-        Setter = (obj, value) => prop.SetValue(obj, value);
-        
-
-        PropertyType = prop.PropertyType;
-        TypeCode = GetTypeCode(PropertyType);
-
-        // Assign lambdas for writing and reading
-        (Write, Read) = CreateHandlers(PropertyType);
+        return type == typeof(string) ||
+               type == typeof(int) ||
+               type == typeof(double) ||
+               type == typeof(float) ||
+               type == typeof(bool);
     }
 
-    public static bool IsSupported(Type type) =>
-        type == typeof(string) ||
-        type == typeof(int) ||
-        type == typeof(double) ||
-        type == typeof(float) ||
-        type == typeof(bool);
+    private static int GetTypeCode(Type type)
+    {
+        return type == typeof(string) ? 0 :
+            type == typeof(int) ? 1 :
+            type == typeof(double) ? 2 :
+            type == typeof(float) ? 3 :
+            type == typeof(bool) ? 4 :
+            throw new NotSupportedException($"Type '{type.Name}' is not supported.");
+    }
 
-    private static int GetTypeCode(Type type) =>
-        type == typeof(string) ? (int)Enum.TypeCode.String :
-        type == typeof(int) ? (int)Enum.TypeCode.Int :
-        type == typeof(double) ? (int)Enum.TypeCode.Double :
-        type == typeof(float) ? (int)Enum.TypeCode.Float :
-        type == typeof(bool) ? (int)Enum.TypeCode.Bool :
-        throw new NotSupportedException($"Type '{type.Name}' is not supported.");
-
-    public static Type FromTypeCode(int code) =>
-        code switch
+    public static Type FromTypeCode(int code)
+    {
+        return code switch
         {
             0 => typeof(string),
             1 => typeof(int),
@@ -66,13 +71,11 @@ public class PropertyMetadata<T>
             4 => typeof(bool),
             _ => throw new NotSupportedException($"Type code {code} is not supported.")
         };
+    }
 
     public int GetValueSize(object? instance)
     {
-        if (instance == null)
-        {
-            throw new ArgumentNullException(nameof(instance));
-        }
+        if (instance == null) throw new ArgumentNullException(nameof(instance));
         var value = PropertyInfo.GetValue(instance);
 
         return PropertyType switch
@@ -90,21 +93,18 @@ public class PropertyMetadata<T>
     private static (WriteDelegate write, ReadDelegate read) CreateHandlers(Type type)
     {
         if (type == typeof(string))
-        {
             return (
                 (span, value) =>
                 {
                     var strValue = (string?)value ?? string.Empty;
-                    int byteCount = Encoding.UTF8.GetByteCount(strValue);
+                    var byteCount = Encoding.UTF8.GetByteCount(strValue);
                     BinaryPrimitives.WriteInt32LittleEndian(span, byteCount);
                     span = span[IntSize..];
                     Encoding.UTF8.GetBytes(strValue.AsSpan(), span);
                 },
                 span => Encoding.UTF8.GetString(span)
             );
-        }
         if (type == typeof(int))
-        {
             return (
                 (span, value) =>
                 {
@@ -114,9 +114,7 @@ public class PropertyMetadata<T>
                 },
                 span => BinaryPrimitives.ReadInt32LittleEndian(span)
             );
-        }
         if (type == typeof(double))
-        {
             return (
                 (span, value) =>
                 {
@@ -126,9 +124,7 @@ public class PropertyMetadata<T>
                 },
                 span => BinaryPrimitives.ReadDoubleLittleEndian(span)
             );
-        }
         if (type == typeof(float))
-        {
             return (
                 (span, value) =>
                 {
@@ -138,9 +134,7 @@ public class PropertyMetadata<T>
                 },
                 span => BinaryPrimitives.ReadSingleLittleEndian(span)
             );
-        }
         if (type == typeof(bool))
-        {
             return (
                 (span, value) =>
                 {
@@ -150,7 +144,6 @@ public class PropertyMetadata<T>
                 },
                 span => span[0] != 0
             );
-        }
 
         throw new NotSupportedException($"Unsupported type {type.Name}");
     }

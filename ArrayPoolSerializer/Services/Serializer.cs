@@ -1,8 +1,8 @@
 ﻿using System.Buffers.Binary;
 using System.Text;
 using ArrayPoolSerializer.Helper;
-using ArrayPoolSerializer.Interfaces;
-using SuperSerializer.Helper;
+using SerializerLibrary.Helper;
+using SerializerLibrary.Interfaces;
 
 namespace ArrayPoolSerializer.Services;
 

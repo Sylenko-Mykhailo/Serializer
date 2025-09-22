@@ -1,6 +1,6 @@
-﻿using SerializatorDeserializator.ClassesToSerialize;
-using SerializatorDeserializator.Services;
-using Serializer.Services;
+﻿using Serializer.Services;
+using SerializerLibrary.ClassesToSerialize;
+using SerializerLibrary.Service;
 
 var list = new List<Person>
 {

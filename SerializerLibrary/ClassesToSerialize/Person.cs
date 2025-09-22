@@ -1,7 +1,6 @@
-﻿
-using SuperSerializer.Attributes;
+﻿using SerializerLibrary.Attributes;
 
-namespace SuperSerializer.ClassesToSerialize;
+namespace SerializerLibrary.ClassesToSerialize;
 
 public class Person
 {

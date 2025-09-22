@@ -1,12 +1,13 @@
 ﻿using System.Buffers.Binary;
 using System.Reflection;
 using System.Text;
-using SerializatorDeserializator.Attributes;
-using SerializatorDeserializator.Interfaces;
+using SerializerLibrary.Attributes;
+using SerializerLibrary.Interfaces;
+using Serialize = Serializer.Interfaces;
 
 namespace Serializer.Services;
 
-public class Serializer<T>(ILogger logger) : ISerializer<T>
+public class Serializer<T>(ILogger logger) : Serialize.ISerializer<T>
 {
     private readonly byte[] _dataBuffer = new byte[2048];
 

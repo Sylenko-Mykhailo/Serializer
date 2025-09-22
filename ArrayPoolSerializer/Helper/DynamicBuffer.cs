@@ -1,5 +1,5 @@
 ﻿using System.Buffers;
-using SuperSerializer.Helper;
+using SerializerLibrary.Helper;
 
 namespace ArrayPoolSerializer.Helper;
 

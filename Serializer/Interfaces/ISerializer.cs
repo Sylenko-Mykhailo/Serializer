@@ -1,4 +1,4 @@
-﻿namespace SerializatorDeserializator.Interfaces;
+﻿namespace Serializer.Interfaces;
 
 public interface ISerializer<T>
 {

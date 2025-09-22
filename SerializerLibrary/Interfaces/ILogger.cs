@@ -1,4 +1,4 @@
-﻿namespace SuperSerializer.Interfaces;
+﻿namespace SerializerLibrary.Interfaces;
 
 public interface ILogger
 {
