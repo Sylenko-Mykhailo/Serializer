@@ -5,7 +5,7 @@ using SuperSerializer.Interfaces;
 
 namespace SuperSerializer.Services;
 
-public class Serializer<T> : ISerializer<T> where T : class
+public class Serializer<T> : ISerializer<T>, IDisposable where T : class
 {
     private const int IntSize = 4;
     private readonly TypeMetadata<T> _metadata = new();
@@ -107,5 +107,10 @@ public class Serializer<T> : ISerializer<T> where T : class
         }
 
         stream.Write(_buffer.Span[..sizeOfValuesToWrite]);
+    }
+
+    public void Dispose()
+    {
+        _buffer.Dispose();
     }
 }

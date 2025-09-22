@@ -6,7 +6,7 @@ using SuperSerializer.Interfaces;
 
 namespace SuperSerializer.Services;
 
-public class Deserializer<T> : IDeserializer<T> where T : class, new()
+public class Deserializer<T> : IDeserializer<T>, IDisposable where T : class, new()
 {
     private const int IntSize = 4;
     private readonly TypeMetadata<T> _metadata = new();
@@ -127,4 +127,8 @@ public class Deserializer<T> : IDeserializer<T> where T : class, new()
         return obj;
     }
 
+    public void Dispose()
+    {
+        _buffer.Dispose();
+    }
 }
