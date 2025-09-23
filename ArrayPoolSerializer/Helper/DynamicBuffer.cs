@@ -19,6 +19,7 @@ public class DynamicBuffer : IDisposable
             ArrayPool<byte>.Shared.Return(_buffer, true);
             _buffer = null!;
         }
+        GC.SuppressFinalize(this);
     }
 
     public void EnsureCapacity(int requiredSize)
