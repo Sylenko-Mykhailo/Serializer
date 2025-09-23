@@ -138,7 +138,11 @@ public class Deserializer<T> : IDeserializer<T>, IDisposable where T : class, ne
     {
         if (!_disposed)
         {
-            if (disposing) _buffer.Dispose();
+            if (disposing)
+            {
+                // Dispose managed resources if any
+            }
+            _buffer.Dispose();
 
             _disposed = true;
         }

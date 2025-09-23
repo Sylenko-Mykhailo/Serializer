@@ -14,11 +14,8 @@ public class DynamicBuffer : IDisposable
 
     public void Dispose()
     {
-        if (_buffer != null)
-        {
-            ArrayPool<byte>.Shared.Return(_buffer, true);
-            _buffer = null!;
-        }
+        ArrayPool<byte>.Shared.Return(_buffer, true);
+        _buffer = null!;
         GC.SuppressFinalize(this);
     }
 

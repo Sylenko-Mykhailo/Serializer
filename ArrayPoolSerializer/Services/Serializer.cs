@@ -21,11 +21,7 @@ public class Serializer<T> : ISerializer<T>, IDisposable where T : class
         _buffer.EnsureCapacity(DynamicBuffer.CalculateApproxSize(_metadata));
     }
 
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
+    
 
     public void Serialize(T obj, Stream stream)
     {
@@ -121,11 +117,19 @@ public class Serializer<T> : ISerializer<T>, IDisposable where T : class
     {
         if (!_disposed)
         {
-            if (disposing) _buffer.Dispose();
-
+            if (disposing)
+            {
+                // Dispose managed resources if any
+            }
+            _buffer.Dispose();
             _disposed = true;
         }
     }
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }   
 
     ~Serializer()
     {
